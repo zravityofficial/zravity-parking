@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Zravity",
-  description: "Zravity official site — under construction.",
+  title: "Zravity — Parking, reimagined",
+  description:
+    "Zravity is building a smarter way to find, book, and pay for parking. Launching soon.",
 };
 
 export default function RootLayout({
