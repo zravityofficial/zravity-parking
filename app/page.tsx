@@ -49,10 +49,13 @@ export default function Home() {
         <p className="animate-fade-up mt-4 max-w-md text-base text-balance text-grey-500 [animation-delay:250ms] dark:text-grey-400 sm:text-lg">
           We&apos;re building something good. Check back soon.
         </p>
+          <p className="animate-fade-up mt-4 max-w-md text-lg text-balance text-grey-500 [animation-delay:300ms] dark:text-grey-400 sm:text-lg">
+ Powered by - Gagan Punia Group
+        </p>
       </main>
 
       <footer className="relative z-10 flex items-center justify-center px-6 py-6 text-xs text-grey-400">
-        © {new Date().getFullYear()} Zravity. All rights reserved.
+        © {new Date().getFullYear()} Zravity. All rights reserved. 
       </footer>
     </div>
   );
