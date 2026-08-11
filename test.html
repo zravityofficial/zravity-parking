@@ -1,0 +1,2418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLUX — Everything. Now.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              fx: {
+                0: "#FFFFFF",
+                1: "#F8F8F8",
+                2: "#F0F0F0",
+                3: "#E8E8E8",
+                4: "#DCDCDC",
+                5: "#CCCCCC",
+                6: "#BBBBBB",
+                7: "#AAAAAA",
+                g1: "#777777",
+                g2: "#555555",
+                g3: "#444444",
+                g4: "#222222",
+                g5: "#111111",
+                accent: "#00C853",
+                orange: "#FF6D00",
+                red: "#FF1744",
+                blue: "#448AFF",
+              },
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #d9d9d9;
+        color: #111111;
+        overflow-x: hidden;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f8f8f8;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cccccc;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #aaaaaa;
+      }
+
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      @keyframes slideInLeft {
+        0% {
+          opacity: 0;
+          transform: translateX(-60px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes slideInRight {
+        0% {
+          opacity: 0;
+          transform: translateX(60px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(0, 200, 83, 0.15);
+        }
+        50% {
+          box-shadow: 0 0 40px rgba(0, 200, 83, 0.3);
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      @keyframes countdown-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+      @keyframes rotate-slow {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .stagger-1 {
+        transition-delay: 0.1s;
+      }
+      .stagger-2 {
+        transition-delay: 0.2s;
+      }
+      .stagger-3 {
+        transition-delay: 0.3s;
+      }
+      .stagger-4 {
+        transition-delay: 0.4s;
+      }
+      .stagger-5 {
+        transition-delay: 0.5s;
+      }
+      .stagger-6 {
+        transition-delay: 0.6s;
+      }
+
+      .hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition:
+          opacity 1s ease,
+          transform 1s ease;
+        transform: scale(1.05);
+      }
+      .hero-slide.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .nav-link {
+        position: relative;
+        transition: color 0.3s;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #00c853;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-link:hover {
+        color: #00c853;
+      }
+
+      .cat-card {
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .cat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+      }
+      .cat-card:hover .cat-icon-wrap {
+        background: #00c853;
+        color: #fff;
+        transform: rotate(5deg) scale(1.1);
+      }
+      .cat-icon-wrap {
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .product-card {
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1);
+      }
+      .product-card:hover .p-img {
+        transform: scale(1.08);
+      }
+      .p-img {
+        transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .product-card:hover .p-quick {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .p-quick {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.4s ease;
+      }
+
+      .deal-card {
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .deal-card:hover {
+        transform: scale(1.03);
+      }
+      .deal-card:hover .deal-img {
+        transform: scale(1.1);
+      }
+      .deal-img {
+        transition: transform 0.7s ease;
+      }
+
+      .search-input:focus ~ .search-line {
+        width: 100%;
+      }
+      .search-line {
+        width: 0;
+        transition: width 0.4s ease;
+      }
+
+      .brand-scroll {
+        animation: marquee 30s linear infinite;
+      }
+      .brand-scroll:hover {
+        animation-play-state: paused;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .glass-heavy {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+      }
+
+      .gradient-border {
+        position: relative;
+      }
+      .gradient-border::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, #00c853, #448aff, #ff6d00);
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .gradient-border:hover::before {
+        opacity: 1;
+      }
+
+      .shimmer-bg {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 0, 0, 0.03),
+          transparent
+        );
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
+      }
+
+      .dot-pattern {
+        background-image: radial-gradient(
+          rgba(0, 0, 0, 0.05) 1px,
+          transparent 1px
+        );
+        background-size: 24px 24px;
+      }
+
+      .toast {
+        animation:
+          fadeInUp 0.5s ease,
+          fadeIn 0.3s ease;
+      }
+
+      .deal-overlay {
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+      .deal-card:hover .deal-overlay {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="dot-pattern">
+    <!-- Toast Container -->
+    <div
+      id="toast-container"
+      class="fixed top-24 right-4 z-[9999] flex flex-col gap-3"
+    ></div>
+
+    <!-- Top Marquee Bar -->
+    <div
+      class="bg-fx-accent text-white text-xs font-semibold py-1.5 overflow-hidden relative z-[100]"
+    >
+      <div class="brand-scroll flex whitespace-nowrap gap-16">
+        <span class="flex items-center gap-2"
+          >⚡ FLASH SALE LIVE — Up to 80% OFF</span
+        >
+        <span class="flex items-center gap-2"
+          >🚀 FREE Delivery on orders above ₹499</span
+        >
+        <span class="flex items-center gap-2"
+          >🔥 New Arrivals every 30 minutes</span
+        >
+        <span class="flex items-center gap-2"
+          >🏍️ Rapido: Book a ride in 60 seconds</span
+        >
+        <span class="flex items-center gap-2"
+          >🍔 Zomato: First order FREE delivery</span
+        >
+        <span class="flex items-center gap-2"
+          >🛒 Blinkit: Groceries in 10 minutes</span
+        >
+        <span class="flex items-center gap-2"
+          >👗 Ajio + Myntra: Style unlimited</span
+        >
+        <span class="flex items-center gap-2"
+          >⚡ FLASH SALE LIVE — Up to 80% OFF</span
+        >
+        <span class="flex items-center gap-2"
+          >🚀 FREE Delivery on orders above ₹499</span
+        >
+        <span class="flex items-center gap-2"
+          >🔥 New Arrivals every 30 minutes</span
+        >
+        <span class="flex items-center gap-2"
+          >🏍️ Rapido: Book a ride in 60 seconds</span
+        >
+        <span class="flex items-center gap-2"
+          >🍔 Zomato: First order FREE delivery</span
+        >
+        <span class="flex items-center gap-2"
+          >🛒 Blinkit: Groceries in 10 minutes</span
+        >
+        <span class="flex items-center gap-2"
+          >👗 Ajio + Myntra: Style unlimited</span
+        >
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav
+      id="navbar"
+      class="fixed top-7 left-0 right-0 z-[99] transition-all duration-500"
+    >
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div
+          class="glass-heavy rounded-2xl border border-fx-4 px-4 lg:px-6 py-3 flex items-center gap-4 lg:gap-8 shadow-sm"
+        >
+          <!-- Logo -->
+          <a href="#" class="flex items-center gap-2 shrink-0 group">
+            <div
+              class="w-9 h-9 bg-fx-accent rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300"
+            >
+              <span class="text-white font-display font-bold text-lg">F</span>
+            </div>
+            <span
+              class="font-display font-bold text-xl tracking-tight hidden sm:block text-fx-g5"
+              >FLUX</span
+            >
+          </a>
+
+          <!-- Location -->
+          <button
+            class="hidden md:flex items-center gap-1.5 text-fx-g2 hover:text-fx-accent transition-colors shrink-0"
+            onclick="showToast('📍 Location updated to your current area')"
+          >
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            <span class="text-sm font-medium">Koramangala, Bangalore</span>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+
+          <!-- Search -->
+          <div class="flex-1 max-w-2xl relative group">
+            <div
+              class="flex items-center bg-fx-2 rounded-xl border border-fx-4 focus-within:border-fx-accent/50 transition-all px-4 py-2.5"
+            >
+              <i
+                data-lucide="search"
+                class="w-4 h-4 text-fx-g1 mr-3 shrink-0"
+              ></i>
+              <input
+                id="searchInput"
+                type="text"
+                placeholder="Search fashion, food, groceries, rides..."
+                class="bg-transparent text-sm text-fx-g4 placeholder:text-fx-g1 outline-none w-full"
+                autocomplete="off"
+              />
+              <kbd
+                class="hidden lg:flex items-center gap-0.5 text-[10px] text-fx-g1 border border-fx-4 rounded-md px-1.5 py-0.5 shrink-0 bg-fx-1"
+                >⌘K</kbd
+              >
+            </div>
+            <div
+              class="search-line absolute bottom-0 left-4 right-4 h-0.5 bg-fx-accent rounded-full"
+            ></div>
+            <!-- Search Suggestions -->
+            <div
+              id="searchDropdown"
+              class="absolute top-full left-0 right-0 mt-2 bg-white border border-fx-4 rounded-xl overflow-hidden shadow-2xl hidden z-50"
+            >
+              <div class="p-3">
+                <p
+                  class="text-[11px] uppercase tracking-wider text-fx-g1 font-semibold mb-2 px-2"
+                >
+                  Trending
+                </p>
+                <div id="searchResults" class="space-y-0.5"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nav Actions -->
+          <div class="flex items-center gap-1 lg:gap-2 shrink-0">
+            <button
+              class="nav-link p-2 rounded-lg hover:bg-fx-2 transition-colors relative"
+              onclick="showToast('👤 Sign in to access your account')"
+            >
+              <i data-lucide="user" class="w-5 h-5 text-fx-g2"></i>
+              <span class="hidden lg:block text-xs text-fx-g2 ml-1"
+                >Account</span
+              >
+            </button>
+            <button
+              class="nav-link p-2 rounded-lg hover:bg-fx-2 transition-colors relative"
+              onclick="showToast('💝 No items in wishlist')"
+            >
+              <i data-lucide="heart" class="w-5 h-5 text-fx-g2"></i>
+              <span
+                class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-fx-red rounded-full text-[9px] font-bold flex items-center justify-center text-white"
+                >3</span
+              >
+            </button>
+            <button
+              class="nav-link p-2 rounded-lg hover:bg-fx-2 transition-colors relative"
+              onclick="showToast('🛒 Cart has 2 items — ₹1,249')"
+            >
+              <i data-lucide="shopping-bag" class="w-5 h-5 text-fx-g2"></i>
+              <span
+                class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-fx-accent text-white rounded-full text-[9px] font-bold flex items-center justify-center"
+                >2</span
+              >
+              <span class="hidden lg:block text-xs text-fx-g2 ml-1">Cart</span>
+            </button>
+            <button
+              class="lg:hidden p-2 rounded-lg hover:bg-fx-2 transition-colors"
+              onclick="toggleMobileMenu()"
+            >
+              <i data-lucide="menu" class="w-5 h-5 text-fx-g2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-[200] hidden">
+      <div
+        class="absolute inset-0 bg-black/30 backdrop-blur-sm"
+        onclick="toggleMobileMenu()"
+      ></div>
+      <div
+        class="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-fx-4 p-6 overflow-y-auto transform translate-x-full transition-transform duration-500"
+        id="mobileMenuPanel"
+      >
+        <div class="flex justify-between items-center mb-8">
+          <span class="font-display font-bold text-xl">Menu</span>
+          <button
+            onclick="toggleMobileMenu()"
+            class="p-2 hover:bg-fx-2 rounded-lg"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="space-y-1" id="mobileNavLinks"></div>
+      </div>
+    </div>
+
+    <!-- Hero Slider -->
+    <section class="relative h-[85vh] min-h-[600px] mt-14 overflow-hidden">
+      <div id="heroSlider" class="absolute inset-0">
+        <div class="hero-slide active" data-slide="0">
+          <img
+            src="https://picsum.photos/seed/flux-fashion-hero/1920/1080.jpg"
+            class="w-full h-full object-cover"
+            alt="Fashion"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-white/30"
+          ></div>
+          <div class="absolute inset-0 flex items-center">
+            <div class="max-w-[1440px] mx-auto px-4 lg:px-8 w-full">
+              <div class="max-w-xl">
+                <span
+                  class="inline-flex items-center gap-2 bg-fx-accent/10 border border-fx-accent/30 text-fx-accent text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+                  style="animation: fadeInUp 0.6s 0.3s both"
+                >
+                  <span
+                    class="w-2 h-2 bg-fx-accent rounded-full animate-pulse"
+                  ></span>
+                  Fashion Week Live
+                </span>
+                <h1
+                  class="font-display text-5xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6 text-fx-g5"
+                  style="animation: fadeInUp 0.6s 0.5s both"
+                >
+                  Style That<br /><span class="text-fx-accent">Speaks</span>
+                  Volumes
+                </h1>
+                <p
+                  class="text-fx-g2 text-lg mb-8 max-w-md"
+                  style="animation: fadeInUp 0.6s 0.7s both"
+                >
+                  Curated from Ajio & Myntra — 10L+ styles at your fingertips
+                </p>
+                <div
+                  class="flex gap-3"
+                  style="animation: fadeInUp 0.6s 0.9s both"
+                >
+                  <button
+                    class="bg-fx-accent text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-green-600 transition-colors text-sm"
+                    onclick="showToast('👗 Opening Fashion Store...')"
+                  >
+                    Shop Now
+                  </button>
+                  <button
+                    class="border border-fx-g1 text-fx-g4 font-medium px-8 py-3.5 rounded-xl hover:bg-fx-2 transition-colors text-sm"
+                  >
+                    Explore
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-slide" data-slide="1">
+          <img
+            src="https://picsum.photos/seed/flux-food-hero2/1920/1080.jpg"
+            class="w-full h-full object-cover"
+            alt="Food"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-white/30"
+          ></div>
+          <div class="absolute inset-0 flex items-center">
+            <div class="max-w-[1440px] mx-auto px-4 lg:px-8 w-full">
+              <div class="max-w-xl">
+                <span
+                  class="inline-flex items-center gap-2 bg-fx-orange/10 border border-fx-orange/30 text-fx-orange text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+                >
+                  <span
+                    class="w-2 h-2 bg-fx-orange rounded-full animate-pulse"
+                  ></span>
+                  Food Delivery
+                </span>
+                <h1
+                  class="font-display text-5xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6 text-fx-g5"
+                >
+                  Cravings<br /><span class="text-fx-orange">Delivered</span>
+                  Fast
+                </h1>
+                <p class="text-fx-g2 text-lg mb-8 max-w-md">
+                  From Zomato's 3L+ restaurant partners — 30 min delivery
+                </p>
+                <div class="flex gap-3">
+                  <button
+                    class="bg-fx-orange text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-orange-600 transition-colors text-sm"
+                    onclick="showToast('🍔 Opening Food Section...')"
+                  >
+                    Order Food
+                  </button>
+                  <button
+                    class="border border-fx-g1 text-fx-g4 font-medium px-8 py-3.5 rounded-xl hover:bg-fx-2 transition-colors text-sm"
+                  >
+                    See Menus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-slide" data-slide="2">
+          <img
+            src="https://picsum.photos/seed/flux-grocery-hero3/1920/1080.jpg"
+            class="w-full h-full object-cover"
+            alt="Grocery"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-white/30"
+          ></div>
+          <div class="absolute inset-0 flex items-center">
+            <div class="max-w-[1440px] mx-auto px-4 lg:px-8 w-full">
+              <div class="max-w-xl">
+                <span
+                  class="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/30 text-yellow-600 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+                >
+                  <span
+                    class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"
+                  ></span>
+                  10-Min Delivery
+                </span>
+                <h1
+                  class="font-display text-5xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6 text-fx-g5"
+                >
+                  Groceries in<br /><span class="text-yellow-600"
+                    >10 Minutes</span
+                  >
+                </h1>
+                <p class="text-fx-g2 text-lg mb-8 max-w-md">
+                  Blinkit-powered — 10K+ products, lightning-fast at your door
+                </p>
+                <div class="flex gap-3">
+                  <button
+                    class="bg-yellow-500 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-yellow-600 transition-colors text-sm"
+                    onclick="showToast('🛒 Opening Grocery Store...')"
+                  >
+                    Shop Groceries
+                  </button>
+                  <button
+                    class="border border-fx-g1 text-fx-g4 font-medium px-8 py-3.5 rounded-xl hover:bg-fx-2 transition-colors text-sm"
+                  >
+                    Browse All
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-slide" data-slide="3">
+          <img
+            src="https://picsum.photos/seed/flux-ride-hero4/1920/1080.jpg"
+            class="w-full h-full object-cover"
+            alt="Ride"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent"
+          ></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-white/30"
+          ></div>
+          <div class="absolute inset-0 flex items-center">
+            <div class="max-w-[1440px] mx-auto px-4 lg:px-8 w-full">
+              <div class="max-w-xl">
+                <span
+                  class="inline-flex items-center gap-2 bg-fx-blue/10 border border-fx-blue/30 text-fx-blue text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+                >
+                  <span
+                    class="w-2 h-2 bg-fx-blue rounded-full animate-pulse"
+                  ></span>
+                  Rapido Rides
+                </span>
+                <h1
+                  class="font-display text-5xl md:text-7xl font-bold leading-[1.05] tracking-tight mb-6 text-fx-g5"
+                >
+                  Ride Anywhere<br /><span class="text-fx-blue"
+                    >In Seconds</span
+                  >
+                </h1>
+                <p class="text-fx-g2 text-lg mb-8 max-w-md">
+                  Bike taxi, auto, cab — Rapido gets you there fastest
+                </p>
+                <div class="flex gap-3">
+                  <button
+                    class="bg-fx-blue text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-500 transition-colors text-sm"
+                    onclick="showToast('🏍️ Opening Ride Booking...')"
+                  >
+                    Book a Ride
+                  </button>
+                  <button
+                    class="border border-fx-g1 text-fx-g4 font-medium px-8 py-3.5 rounded-xl hover:bg-fx-2 transition-colors text-sm"
+                  >
+                    Schedule
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Slider Controls -->
+      <div
+        class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3"
+      >
+        <button
+          onclick="prevSlide()"
+          class="w-10 h-10 rounded-full border border-fx-g1/30 flex items-center justify-center hover:bg-white/80 transition-colors backdrop-blur-sm bg-white/40"
+        >
+          <i data-lucide="chevron-left" class="w-4 h-4 text-fx-g4"></i>
+        </button>
+        <div class="flex gap-2" id="sliderDots"></div>
+        <button
+          onclick="nextSlide()"
+          class="w-10 h-10 rounded-full border border-fx-g1/30 flex items-center justify-center hover:bg-white/80 transition-colors backdrop-blur-sm bg-white/40"
+        >
+          <i data-lucide="chevron-right" class="w-4 h-4 text-fx-g4"></i>
+        </button>
+      </div>
+      <!-- Slide Counter -->
+      <div
+        class="absolute top-8 right-8 z-20 bg-white/60 backdrop-blur-sm border border-fx-4 rounded-full px-4 py-2 text-sm font-mono text-fx-g2"
+      >
+        <span id="slideCounter" class="text-fx-g4">01</span> /
+        <span class="text-fx-g1">04</span>
+      </div>
+    </section>
+
+    <!-- Quick Categories -->
+    <section class="py-12 lg:py-16 relative">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3 lg:gap-5">
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-1"
+            onclick="showToast('👗 Opening Fashion Store...')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="shirt" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">Fashion</p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">
+              Ajio + Myntra
+            </p>
+          </div>
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-2"
+            onclick="showToast('🍔 Opening Food Delivery...')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="utensils" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">Food</p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">Zomato</p>
+          </div>
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-3"
+            onclick="showToast('🛒 Opening Grocery Store...')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="shopping-cart" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">Grocery</p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">Blinkit</p>
+          </div>
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-4"
+            onclick="showToast('🏍️ Opening Ride Booking...')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="bike" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">Rides</p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">Rapido</p>
+          </div>
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-5"
+            onclick="showToast('📦 Opening Delivery Service...')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="package" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">
+              Delivery
+            </p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">Pick & Drop</p>
+          </div>
+          <div
+            class="cat-card bg-white border border-fx-4 rounded-2xl p-4 lg:p-6 text-center cursor-pointer gradient-border animate-on-scroll stagger-6"
+            onclick="showToast('⚡ View all categories')"
+          >
+            <div
+              class="cat-icon-wrap w-14 h-14 lg:w-16 lg:h-16 bg-fx-2 rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <i data-lucide="grid-3x3" class="w-6 h-6 lg:w-7 lg:h-7"></i>
+            </div>
+            <p class="font-semibold text-sm lg:text-base text-fx-g5">More</p>
+            <p class="text-fx-g1 text-[10px] lg:text-xs mt-0.5">All Services</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Flash Deals with Countdown -->
+    <section class="py-12 lg:py-20 relative overflow-hidden">
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-fx-accent/5 rounded-full blur-[150px] pointer-events-none"
+      ></div>
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8 relative">
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 animate-on-scroll"
+        >
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="w-2 h-2 bg-fx-red rounded-full animate-pulse"></span>
+              <span
+                class="text-fx-red text-xs font-semibold uppercase tracking-widest"
+                >Live Now</span
+              >
+            </div>
+            <h2
+              class="font-display text-3xl md:text-5xl font-bold tracking-tight text-fx-g5"
+            >
+              Flash Deals
+            </h2>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-fx-g1 text-sm">Ends in</span>
+            <div class="flex gap-2" id="countdown">
+              <div
+                class="bg-white border border-fx-4 rounded-xl px-3 py-2 text-center min-w-[56px] shadow-sm"
+                style="animation: countdown-pulse 2s infinite"
+              >
+                <span
+                  class="text-xl font-display font-bold text-fx-accent"
+                  id="cd-hours"
+                  >05</span
+                >
+                <p class="text-[9px] uppercase tracking-wider text-fx-g1">
+                  Hours
+                </p>
+              </div>
+              <span class="text-fx-g1 font-bold self-center">:</span>
+              <div
+                class="bg-white border border-fx-4 rounded-xl px-3 py-2 text-center min-w-[56px] shadow-sm"
+                style="animation: countdown-pulse 2s infinite 0.5s"
+              >
+                <span
+                  class="text-xl font-display font-bold text-fx-accent"
+                  id="cd-mins"
+                  >42</span
+                >
+                <p class="text-[9px] uppercase tracking-wider text-fx-g1">
+                  Mins
+                </p>
+              </div>
+              <span class="text-fx-g1 font-bold self-center">:</span>
+              <div
+                class="bg-white border border-fx-4 rounded-xl px-3 py-2 text-center min-w-[56px] shadow-sm"
+                style="animation: countdown-pulse 2s infinite 1s"
+              >
+                <span
+                  class="text-xl font-display font-bold text-fx-accent"
+                  id="cd-secs"
+                  >18</span
+                >
+                <p class="text-[9px] uppercase tracking-wider text-fx-g1">
+                  Secs
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-5">
+          <div
+            class="deal-card bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer animate-on-scroll stagger-1 shadow-sm"
+            onclick="showToast('✅ Added to cart!')"
+          >
+            <div class="relative h-48 lg:h-64 overflow-hidden">
+              <img
+                src="https://picsum.photos/seed/deal-sneakers/600/800.jpg"
+                class="deal-img w-full h-full object-cover"
+              />
+              <div
+                class="absolute top-3 left-3 bg-fx-red text-white text-xs font-bold px-2.5 py-1 rounded-lg"
+              >
+                -70%
+              </div>
+              <div
+                class="deal-overlay absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4"
+              >
+                <button
+                  class="w-full bg-fx-accent text-white font-semibold py-2.5 rounded-xl text-sm"
+                >
+                  Grab Deal
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-fx-g1 text-xs mb-1">Sneakers</p>
+              <h3 class="font-semibold text-sm truncate text-fx-g4">
+                Nike Air Max 270
+              </h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="font-bold text-fx-accent">₹2,999</span>
+                <span class="text-fx-g1 text-xs line-through">₹9,995</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="deal-card bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer animate-on-scroll stagger-2 shadow-sm"
+            onclick="showToast('✅ Added to cart!')"
+          >
+            <div class="relative h-48 lg:h-64 overflow-hidden">
+              <img
+                src="https://picsum.photos/seed/deal-burger/600/800.jpg"
+                class="deal-img w-full h-full object-cover"
+              />
+              <div
+                class="absolute top-3 left-3 bg-fx-orange text-white text-xs font-bold px-2.5 py-1 rounded-lg"
+              >
+                ₹99
+              </div>
+              <div
+                class="deal-overlay absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4"
+              >
+                <button
+                  class="w-full bg-fx-orange text-white font-semibold py-2.5 rounded-xl text-sm"
+                >
+                  Order Now
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-fx-g1 text-xs mb-1">Food Combo</p>
+              <h3 class="font-semibold text-sm truncate text-fx-g4">
+                Mega Burger Meal
+              </h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="font-bold text-fx-orange">₹99</span>
+                <span class="text-fx-g1 text-xs line-through">₹349</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="deal-card bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer animate-on-scroll stagger-3 shadow-sm"
+            onclick="showToast('✅ Added to cart!')"
+          >
+            <div class="relative h-48 lg:h-64 overflow-hidden">
+              <img
+                src="https://picsum.photos/seed/deal-watch/600/800.jpg"
+                class="deal-img w-full h-full object-cover"
+              />
+              <div
+                class="absolute top-3 left-3 bg-fx-blue text-white text-xs font-bold px-2.5 py-1 rounded-lg"
+              >
+                -60%
+              </div>
+              <div
+                class="deal-overlay absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4"
+              >
+                <button
+                  class="w-full bg-fx-blue text-white font-semibold py-2.5 rounded-xl text-sm"
+                >
+                  Grab Deal
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-fx-g1 text-xs mb-1">Accessories</p>
+              <h3 class="font-semibold text-sm truncate text-fx-g4">
+                Smart Watch Pro
+              </h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="font-bold text-fx-blue">₹1,499</span>
+                <span class="text-fx-g1 text-xs line-through">₹3,999</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="deal-card bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer animate-on-scroll stagger-4 shadow-sm"
+            onclick="showToast('✅ Added to cart!')"
+          >
+            <div class="relative h-48 lg:h-64 overflow-hidden">
+              <img
+                src="https://picsum.photos/seed/deal-groceries/600/800.jpg"
+                class="deal-img w-full h-full object-cover"
+              />
+              <div
+                class="absolute top-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg"
+              >
+                10 MIN
+              </div>
+              <div
+                class="deal-overlay absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4"
+              >
+                <button
+                  class="w-full bg-yellow-500 text-white font-semibold py-2.5 rounded-xl text-sm"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+            <div class="p-4">
+              <p class="text-fx-g1 text-xs mb-1">Grocery Basket</p>
+              <h3 class="font-semibold text-sm truncate text-fx-g4">
+                Fresh Veggies Pack
+              </h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="font-bold text-yellow-600">₹149</span>
+                <span class="text-fx-g1 text-xs line-through">₹280</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fashion Section (Ajio + Myntra) -->
+    <section class="py-12 lg:py-20 relative">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div class="flex items-end justify-between mb-10 animate-on-scroll">
+          <div>
+            <span
+              class="text-fx-accent text-xs font-semibold uppercase tracking-widest"
+              >Ajio × Myntra</span
+            >
+            <h2
+              class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-2 text-fx-g5"
+            >
+              Trending Fashion
+            </h2>
+          </div>
+          <div class="hidden md:flex items-center gap-2">
+            <button
+              id="fashionPrev"
+              class="w-10 h-10 rounded-full border border-fx-4 flex items-center justify-center hover:bg-fx-2 transition-colors bg-white"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            </button>
+            <button
+              id="fashionNext"
+              class="w-10 h-10 rounded-full border border-fx-4 flex items-center justify-center hover:bg-fx-2 transition-colors bg-white"
+            >
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+        <div class="overflow-hidden" id="fashionScroll">
+          <div
+            class="flex gap-4 lg:gap-5 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            id="fashionTrack"
+            style="width: max-content"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Section (Zomato) -->
+    <section class="py-12 lg:py-20 relative overflow-hidden">
+      <div
+        class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-fx-orange/5 rounded-full blur-[150px] pointer-events-none"
+      ></div>
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8 relative">
+        <div class="flex items-end justify-between mb-10 animate-on-scroll">
+          <div>
+            <span
+              class="text-fx-orange text-xs font-semibold uppercase tracking-widest"
+              >Zomato</span
+            >
+            <h2
+              class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-2 text-fx-g5"
+            >
+              Eat What You Love
+            </h2>
+          </div>
+          <a
+            href="#"
+            class="text-fx-g1 text-sm hover:text-fx-orange transition-colors hidden md:flex items-center gap-1"
+            >View All <i data-lucide="arrow-right" class="w-4 h-4"></i
+          ></a>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
+          id="foodGrid"
+        ></div>
+      </div>
+    </section>
+
+    <!-- Rapido Quick Book -->
+    <section class="py-12 lg:py-20 relative">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div
+          class="bg-white border border-fx-4 rounded-3xl overflow-hidden animate-on-scroll shadow-sm"
+        >
+          <div class="grid lg:grid-cols-2 gap-0">
+            <div class="p-8 lg:p-14 flex flex-col justify-center">
+              <span
+                class="text-fx-blue text-xs font-semibold uppercase tracking-widest mb-3"
+                >Rapido</span
+              >
+              <h2
+                class="font-display text-3xl md:text-5xl font-bold tracking-tight mb-4 text-fx-g5"
+              >
+                Go Anywhere,<br /><span class="text-fx-blue">Super Fast</span>
+              </h2>
+              <p class="text-fx-g1 mb-8 max-w-md">
+                Bike, Auto or Cab — affordable rides at your doorstep in under 2
+                minutes.
+              </p>
+              <!-- Ride Booking Form -->
+              <div class="space-y-3 mb-8">
+                <div
+                  class="flex items-center bg-fx-1 rounded-xl border border-fx-4 px-4 py-3 gap-3"
+                >
+                  <div
+                    class="w-3 h-3 bg-fx-accent rounded-full ring-2 ring-fx-accent/30 shrink-0"
+                  ></div>
+                  <input
+                    type="text"
+                    placeholder="Enter pickup location"
+                    class="bg-transparent text-sm outline-none w-full placeholder:text-fx-g1 text-fx-g4"
+                    value="Koramangala 4th Block"
+                  />
+                  <i
+                    data-lucide="locate"
+                    class="w-4 h-4 text-fx-g1 shrink-0 cursor-pointer hover:text-fx-accent transition-colors"
+                  ></i>
+                </div>
+                <div
+                  class="flex items-center bg-fx-1 rounded-xl border border-fx-4 px-4 py-3 gap-3"
+                >
+                  <div
+                    class="w-3 h-3 bg-fx-red rounded-full ring-2 ring-fx-red/30 shrink-0"
+                  ></div>
+                  <input
+                    type="text"
+                    placeholder="Where to?"
+                    class="bg-transparent text-sm outline-none w-full placeholder:text-fx-g1 text-fx-g4"
+                  />
+                </div>
+              </div>
+              <div class="flex gap-3 flex-wrap">
+                <button
+                  class="bg-fx-blue text-white font-semibold px-6 py-3 rounded-xl hover:bg-blue-500 transition-colors text-sm flex items-center gap-2"
+                  onclick="showToast('🏍️ Finding nearest bike...')"
+                >
+                  <i data-lucide="bike" class="w-4 h-4"></i> Bike
+                </button>
+                <button
+                  class="bg-fx-2 border border-fx-4 font-semibold px-6 py-3 rounded-xl hover:bg-fx-3 transition-colors text-sm flex items-center gap-2 text-fx-g4"
+                  onclick="showToast('🚗 Finding nearest auto...')"
+                >
+                  <i data-lucide="car" class="w-4 h-4"></i> Auto
+                </button>
+                <button
+                  class="bg-fx-2 border border-fx-4 font-semibold px-6 py-3 rounded-xl hover:bg-fx-3 transition-colors text-sm flex items-center gap-2 text-fx-g4"
+                  onclick="showToast('🚕 Finding nearest cab...')"
+                >
+                  <i data-lucide="taxi" class="w-4 h-4"></i> Cab
+                </button>
+              </div>
+              <!-- Stats -->
+              <div class="flex gap-8 mt-10 pt-8 border-t border-fx-4">
+                <div>
+                  <p class="font-display text-2xl font-bold text-fx-g5">50L+</p>
+                  <p class="text-fx-g1 text-xs mt-0.5">Daily Rides</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-fx-g5">200+</p>
+                  <p class="text-fx-g1 text-xs mt-0.5">Cities</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-fx-g5">
+                    2 min
+                  </p>
+                  <p class="text-fx-g1 text-xs mt-0.5">Avg. Pickup</p>
+                </div>
+              </div>
+            </div>
+            <div class="relative h-64 lg:h-auto">
+              <img
+                src="https://picsum.photos/seed/rapido-city-ride/800/700.jpg"
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent lg:block hidden"
+              ></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent lg:hidden"
+              ></div>
+              <!-- Floating card -->
+              <div
+                class="absolute bottom-6 right-6 bg-white/80 backdrop-blur-lg border border-fx-4 rounded-2xl p-4 flex items-center gap-3 shadow-lg"
+                style="animation: float 3s ease-in-out infinite"
+              >
+                <div
+                  class="w-10 h-10 bg-fx-accent/20 rounded-xl flex items-center justify-center"
+                >
+                  <i
+                    data-lucide="navigation"
+                    class="w-5 h-5 text-fx-accent"
+                  ></i>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-fx-g4">₹15 off</p>
+                  <p class="text-fx-g1 text-xs">First ride free</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blinkit Grocery Section -->
+    <section class="py-12 lg:py-20 relative overflow-hidden">
+      <div
+        class="absolute top-1/2 left-0 w-[400px] h-[400px] bg-yellow-400/5 rounded-full blur-[150px] pointer-events-none"
+      ></div>
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8 relative">
+        <div class="flex items-end justify-between mb-10 animate-on-scroll">
+          <div>
+            <span
+              class="text-yellow-600 text-xs font-semibold uppercase tracking-widest"
+              >Blinkit</span
+            >
+            <h2
+              class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-2 text-fx-g5"
+            >
+              Minutes Delivery
+            </h2>
+            <p class="text-fx-g1 mt-2">
+              Groceries, snacks, essentials — at your door in 10 minutes
+            </p>
+          </div>
+          <a
+            href="#"
+            class="text-fx-g1 text-sm hover:text-yellow-600 transition-colors hidden md:flex items-center gap-1"
+            >View All <i data-lucide="arrow-right" class="w-4 h-4"></i
+          ></a>
+        </div>
+        <div
+          class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 lg:gap-4"
+          id="groceryGrid"
+        ></div>
+      </div>
+    </section>
+
+    <!-- Brand Logos Scroll -->
+    <section class="py-12 border-y border-fx-4 overflow-hidden">
+      <div class="brand-scroll flex items-center gap-16 whitespace-nowrap">
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >AJIO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >MYNTRA</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >ZOMATO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >BLINKIT</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >RAPIDO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >NIKE</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >H&M</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >ADIDAS</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >LEVIS</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >PUMA</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >AJIO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >MYNTRA</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >ZOMATO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >BLINKIT</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >RAPIDO</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >NIKE</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >H&M</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >ADIDAS</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >LEVIS</span
+        >
+        <span
+          class="text-fx-5/20 font-display text-2xl font-bold tracking-tight"
+          >PUMA</span
+        >
+      </div>
+    </section>
+
+    <!-- Premium Banner CTA -->
+    <section class="py-20 lg:py-28 relative overflow-hidden">
+      <div class="absolute inset-0">
+        <img
+          src="https://picsum.photos/seed/flux-premium-banner/1920/600.jpg"
+          class="w-full h-full object-cover opacity-10"
+        />
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white/70"
+        ></div>
+      </div>
+      <div
+        class="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-fx-accent/10 rounded-full blur-[200px] pointer-events-none"
+      ></div>
+      <div
+        class="max-w-[1440px] mx-auto px-4 lg:px-8 relative text-center animate-on-scroll"
+      >
+        <span
+          class="inline-flex items-center gap-2 bg-fx-accent/10 border border-fx-accent/30 text-fx-accent text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6"
+        >
+          FLUX PLUS
+        </span>
+        <h2
+          class="font-display text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-fx-g5"
+        >
+          One App.<br /><span
+            class="bg-gradient-to-r from-fx-accent via-fx-blue to-fx-orange bg-clip-text text-transparent"
+            >Infinite Possibilities.</span
+          >
+        </h2>
+        <p class="text-fx-g1 text-lg max-w-xl mx-auto mb-10">
+          Fashion, food, groceries, rides, deliveries — everything you need,
+          unified in one super app experience.
+        </p>
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <button
+            class="bg-fx-accent text-white font-bold px-10 py-4 rounded-xl hover:shadow-[0_0_40px_rgba(0,200,83,0.3)] transition-all text-sm flex items-center gap-2"
+            onclick="showToast('🎉 Welcome to FLUX Plus!')"
+          >
+            <i data-lucide="crown" class="w-4 h-4"></i> Get FLUX Plus — ₹199/mo
+          </button>
+          <button
+            class="border border-fx-g1/30 text-fx-g3 font-medium px-10 py-4 rounded-xl hover:bg-fx-2 transition-colors text-sm"
+          >
+            Learn More
+          </button>
+        </div>
+        <div
+          class="flex items-center justify-center gap-8 mt-12 text-fx-g1 text-sm"
+        >
+          <span class="flex items-center gap-1.5"
+            ><i data-lucide="check-circle" class="w-4 h-4 text-fx-accent"></i>
+            Free Delivery</span
+          >
+          <span class="flex items-center gap-1.5"
+            ><i data-lucide="check-circle" class="w-4 h-4 text-fx-accent"></i>
+            Early Access</span
+          >
+          <span class="flex items-center gap-1.5"
+            ><i data-lucide="check-circle" class="w-4 h-4 text-fx-accent"></i>
+            Exclusive Deals</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-12 lg:py-20">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div class="text-center mb-12 animate-on-scroll">
+          <span
+            class="text-fx-g1 text-xs font-semibold uppercase tracking-widest"
+            >Trusted by Millions</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tight mt-2 text-fx-g5"
+          >
+            What People Say
+          </h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 lg:gap-6">
+          <div
+            class="bg-white border border-fx-4 rounded-2xl p-6 lg:p-8 animate-on-scroll stagger-1 hover:border-fx-accent/30 transition-colors shadow-sm"
+          >
+            <div class="flex gap-1 mb-4">
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+            </div>
+            <p class="text-fx-g2 text-sm leading-relaxed mb-6">
+              "I deleted 5 apps and installed just FLUX. Fashion from Myntra,
+              food from Zomato, groceries from Blinkit — all in one place.
+              Absolute game changer."
+            </p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-fx-accent to-fx-blue flex items-center justify-center text-white font-bold text-sm"
+              >
+                P
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-fx-g4">Priya Sharma</p>
+                <p class="text-fx-g1 text-xs">Bangalore</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white border border-fx-4 rounded-2xl p-6 lg:p-8 animate-on-scroll stagger-2 hover:border-fx-orange/30 transition-colors shadow-sm"
+          >
+            <div class="flex gap-1 mb-4">
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+            </div>
+            <p class="text-fx-g2 text-sm leading-relaxed mb-6">
+              "Rapido integration is chef's kiss. I book a ride, order groceries
+              on the way, and by the time I reach home, Blinkit has already
+              delivered. Next level."
+            </p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-fx-orange to-fx-red flex items-center justify-center text-white font-bold text-sm"
+              >
+                R
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-fx-g4">Rahul Verma</p>
+                <p class="text-fx-g1 text-xs">Delhi</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white border border-fx-4 rounded-2xl p-6 lg:p-8 animate-on-scroll stagger-3 hover:border-purple-300 transition-colors shadow-sm"
+          >
+            <div class="flex gap-1 mb-4">
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i
+                data-lucide="star"
+                class="w-4 h-4 text-yellow-400 fill-yellow-400"
+              ></i>
+              <i data-lucide="star" class="w-4 h-4 text-fx-6"></i>
+            </div>
+            <p class="text-fx-g2 text-sm leading-relaxed mb-6">
+              "The fashion collection combining Ajio and Myntra is insane. Found
+              a kurta set I was searching for everywhere. Plus, the UI is so
+              clean and premium."
+            </p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm"
+              >
+                A
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-fx-g4">Ananya Iyer</p>
+                <p class="text-fx-g1 text-xs">Mumbai</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Download -->
+    <section class="py-12 lg:py-20">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div
+          class="bg-gradient-to-br from-fx-1 to-fx-2 border border-fx-4 rounded-3xl p-8 lg:p-14 flex flex-col lg:flex-row items-center gap-10 animate-on-scroll shadow-sm"
+        >
+          <div class="flex-1">
+            <h2
+              class="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 text-fx-g5"
+            >
+              Get the FLUX App
+            </h2>
+            <p class="text-fx-g1 mb-8 max-w-md">
+              The super app experience, now in your pocket. Download and get
+              ₹200 off on your first order.
+            </p>
+            <div class="flex gap-3 flex-wrap">
+              <button
+                class="bg-fx-g4 text-white font-semibold px-6 py-3 rounded-xl hover:bg-fx-g5 transition-colors text-sm flex items-center gap-2"
+                onclick="showToast('🍎 Redirecting to App Store...')"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"
+                  />
+                </svg>
+                App Store
+              </button>
+              <button
+                class="bg-fx-g4 text-white font-semibold px-6 py-3 rounded-xl hover:bg-fx-g5 transition-colors text-sm flex items-center gap-2"
+                onclick="showToast('🤖 Redirecting to Play Store...')"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 0 1 0 1.38l-2.302 2.302L15.396 13l2.302-3.492zM5.864 2.658L16.8 8.99l-2.302 2.302-8.634-8.634z"
+                  />
+                </svg>
+                Google Play
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-4 items-end">
+            <div
+              class="w-48 h-80 bg-white border border-fx-4 rounded-[2rem] flex items-center justify-center shimmer-bg shadow-lg"
+              style="animation: float 4s ease-in-out infinite"
+            >
+              <div class="text-center">
+                <div
+                  class="w-12 h-12 bg-fx-accent rounded-2xl flex items-center justify-center mx-auto mb-3"
+                >
+                  <span class="text-white font-display font-bold text-xl"
+                    >F</span
+                  >
+                </div>
+                <p class="font-display font-bold text-sm text-fx-g4">FLUX</p>
+                <p class="text-fx-g1 text-[10px] mt-0.5">v2.4.1</p>
+              </div>
+            </div>
+            <div
+              class="w-44 h-72 bg-white border border-fx-4 rounded-[1.8rem] flex items-center justify-center shimmer-bg -mt-4 opacity-60 shadow-lg"
+              style="animation: float 4s ease-in-out infinite 1s"
+            >
+              <div class="text-center">
+                <div
+                  class="w-10 h-10 bg-fx-accent/50 rounded-xl flex items-center justify-center mx-auto mb-2"
+                >
+                  <span class="text-white font-display font-bold text-lg"
+                    >F</span
+                  >
+                </div>
+                <p class="font-display font-bold text-xs text-fx-g4">FLUX</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-fx-4 pt-16 pb-8">
+      <div class="max-w-[1440px] mx-auto px-4 lg:px-8">
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-6 mb-16"
+        >
+          <!-- Brand -->
+          <div class="col-span-2 md:col-span-3 lg:col-span-2">
+            <a href="#" class="flex items-center gap-2 mb-4">
+              <div
+                class="w-10 h-10 bg-fx-accent rounded-xl flex items-center justify-center"
+              >
+                <span class="text-white font-display font-bold text-xl">F</span>
+              </div>
+              <span
+                class="font-display font-bold text-2xl tracking-tight text-fx-g5"
+                >FLUX</span
+              >
+            </a>
+            <p class="text-fx-g1 text-sm max-w-xs mb-6 leading-relaxed">
+              India's first super app — combining fashion, food, groceries, and
+              rides into one seamless experience.
+            </p>
+            <div class="flex gap-3">
+              <a
+                href="#"
+                class="w-9 h-9 bg-fx-1 border border-fx-4 rounded-lg flex items-center justify-center hover:bg-fx-2 hover:border-fx-accent/50 transition-all"
+                ><i data-lucide="twitter" class="w-4 h-4 text-fx-g1"></i
+              ></a>
+              <a
+                href="#"
+                class="w-9 h-9 bg-fx-1 border border-fx-4 rounded-lg flex items-center justify-center hover:bg-fx-2 hover:border-fx-accent/50 transition-all"
+                ><i data-lucide="instagram" class="w-4 h-4 text-fx-g1"></i
+              ></a>
+              <a
+                href="#"
+                class="w-9 h-9 bg-fx-1 border border-fx-4 rounded-lg flex items-center justify-center hover:bg-fx-2 hover:border-fx-accent/50 transition-all"
+                ><i data-lucide="youtube" class="w-4 h-4 text-fx-g1"></i
+              ></a>
+              <a
+                href="#"
+                class="w-9 h-9 bg-fx-1 border border-fx-4 rounded-lg flex items-center justify-center hover:bg-fx-2 hover:border-fx-accent/50 transition-all"
+                ><i data-lucide="linkedin" class="w-4 h-4 text-fx-g1"></i
+              ></a>
+            </div>
+          </div>
+          <!-- Fashion -->
+          <div>
+            <h4
+              class="font-semibold text-sm mb-4 flex items-center gap-2 text-fx-g5"
+            >
+              <i data-lucide="shirt" class="w-4 h-4 text-fx-accent"></i> Fashion
+            </h4>
+            <ul class="space-y-2.5 text-fx-g1 text-sm">
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Men's Wear</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Women's Wear</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Kids Fashion</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Footwear</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Accessories</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Beauty</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Food -->
+          <div>
+            <h4
+              class="font-semibold text-sm mb-4 flex items-center gap-2 text-fx-g5"
+            >
+              <i data-lucide="utensils" class="w-4 h-4 text-fx-orange"></i> Food
+            </h4>
+            <ul class="space-y-2.5 text-fx-g1 text-sm">
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Restaurants</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Dine Out</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Zomato Gold</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Cuisines</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Offers</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Grocery -->
+          <div>
+            <h4
+              class="font-semibold text-sm mb-4 flex items-center gap-2 text-fx-g5"
+            >
+              <i
+                data-lucide="shopping-cart"
+                class="w-4 h-4 text-yellow-500"
+              ></i>
+              Grocery
+            </h4>
+            <ul class="space-y-2.5 text-fx-g1 text-sm">
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Fruits & Veg</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Dairy & Bread</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Snacks</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Beverages</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Household</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Rides -->
+          <div>
+            <h4
+              class="font-semibold text-sm mb-4 flex items-center gap-2 text-fx-g5"
+            >
+              <i data-lucide="bike" class="w-4 h-4 text-fx-blue"></i> Rides
+            </h4>
+            <ul class="space-y-2.5 text-fx-g1 text-sm">
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Bike Taxi</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors">Auto</a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Cab Service</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Pick & Drop</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-fx-g4 transition-colors"
+                  >Corporate</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div
+          class="border-t border-fx-4 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p class="text-fx-g1 text-xs">
+            © 2025 FLUX Technologies Pvt. Ltd. All rights reserved.
+          </p>
+          <div class="flex items-center gap-6 text-fx-g1 text-xs">
+            <a href="#" class="hover:text-fx-g4 transition-colors">Privacy</a>
+            <a href="#" class="hover:text-fx-g4 transition-colors">Terms</a>
+            <a href="#" class="hover:text-fx-g4 transition-colors">Cookies</a>
+            <a href="#" class="hover:text-fx-g4 transition-colors">Sitemap</a>
+          </div>
+          <div class="flex items-center gap-2 text-fx-g1 text-xs">
+            <span>Made with</span>
+            <i data-lucide="heart" class="w-3 h-3 text-fx-red fill-fx-red"></i>
+            <span>in India</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button
+      id="backToTop"
+      class="fixed bottom-6 right-6 w-12 h-12 bg-fx-accent text-white rounded-full flex items-center justify-center shadow-lg opacity-0 translate-y-4 transition-all duration-300 z-50 hover:shadow-[0_0_30px_rgba(0,200,83,0.4)]"
+      onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    >
+      <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <script>
+      // ====== DATA ======
+      const fashionProducts = [
+        {
+          name: "Oversized Graphic Tee",
+          brand: "Roadster",
+          price: "₹799",
+          oldPrice: "₹1,499",
+          discount: "47%",
+          img: "flux-tshirt-1",
+          tag: "Bestseller",
+        },
+        {
+          name: "Slim Fit Chinos",
+          brand: "Arrow",
+          price: "₹1,299",
+          oldPrice: "₹2,999",
+          discount: "57%",
+          img: "flux-chinos-2",
+          tag: "New",
+        },
+        {
+          name: "Floral Midi Dress",
+          brand: "Mango",
+          price: "₹2,499",
+          oldPrice: "₹4,999",
+          discount: "50%",
+          img: "flux-dress-3",
+          tag: "Trending",
+        },
+        {
+          name: "Classic White Sneakers",
+          brand: "H&M",
+          price: "₹1,999",
+          oldPrice: "₹3,999",
+          discount: "50%",
+          img: "flux-white-snkr-4",
+          tag: "",
+        },
+        {
+          name: "Denim Jacket",
+          brand: "Levi's",
+          price: "₹3,499",
+          oldPrice: "₹6,999",
+          discount: "50%",
+          img: "flux-denim-jkt-5",
+          tag: "Premium",
+        },
+        {
+          name: "Silk Saree",
+          brand: "Ajio",
+          price: "₹4,999",
+          oldPrice: "₹12,999",
+          discount: "62%",
+          img: "flux-silk-saree-6",
+          tag: "Heritage",
+        },
+        {
+          name: "Sports Track Pants",
+          brand: "Puma",
+          price: "₹1,499",
+          oldPrice: "₹2,999",
+          discount: "50%",
+          img: "flux-trackpants-7",
+          tag: "",
+        },
+        {
+          name: "Leather Belt",
+          brand: "Tommy Hilfiger",
+          price: "₹2,199",
+          oldPrice: "₹4,500",
+          discount: "51%",
+          img: "flux-belt-8",
+          tag: "New",
+        },
+      ];
+
+      const foodRestaurants = [
+        {
+          name: "Meghana Foods",
+          cuisine: "Biryani, South Indian",
+          rating: "4.5",
+          time: "30 min",
+          price: "₹300 for two",
+          img: "flux-biryani-rest",
+          offer: "60% OFF up to ₹120",
+        },
+        {
+          name: "Pizza Hut",
+          cuisine: "Pizza, Italian",
+          rating: "4.1",
+          time: "25 min",
+          price: "₹350 for two",
+          img: "flux-pizza-rest",
+          offer: "Buy 1 Get 1 FREE",
+        },
+        {
+          name: "Behrouz Biryani",
+          cuisine: "Mughlai, Biryani",
+          rating: "4.3",
+          time: "35 min",
+          price: "₹500 for two",
+          img: "flux-behrouz-rest",
+          offer: "Flat ₹125 OFF",
+        },
+        {
+          name: "McDonald's",
+          cuisine: "Burger, Fast Food",
+          rating: "4.2",
+          time: "20 min",
+          price: "₹250 for two",
+          img: "flux-mcd-rest",
+          offer: "Free Fries on ₹299+",
+        },
+        {
+          name: "Chinese Wok",
+          cuisine: "Chinese, Asian",
+          rating: "4.0",
+          time: "35 min",
+          price: "₹400 for two",
+          img: "flux-chinese-rest",
+          offer: "20% OFF up to ₹100",
+        },
+        {
+          name: "Barbeque Nation",
+          cuisine: "North Indian, BBQ",
+          rating: "4.4",
+          time: "45 min",
+          price: "₹600 for two",
+          img: "flux-bbq-rest",
+          offer: "15% OFF with FLUX Plus",
+        },
+      ];
+
+      const groceryItems = [
+        { name: "Amul Milk 500ml", price: "₹27", img: "flux-milk-item" },
+        { name: "Banana (1 dozen)", price: "₹49", img: "flux-banana-item" },
+        { name: "Aashirvaad Atta 5kg", price: "₹269", img: "flux-atta-item" },
+        { name: "Maggi 4-Pack", price: "₹52", img: "flux-maggi-item" },
+        { name: "Onion 1kg", price: "₹35", img: "flux-onion-item" },
+        { name: "Coca Cola 750ml", price: "₹38", img: "flux-coke-item" },
+        { name: "Bread (Fresh)", price: "₹40", img: "flux-bread-item" },
+        { name: "Eggs (12 pcs)", price: "₹89", img: "flux-eggs-item" },
+        { name: "Tomato 1kg", price: "₹42", img: "flux-tomato-item" },
+        { name: "Surf Excel 1kg", price: "₹129", img: "flux-surf-item" },
+        { name: "Parle-G Pack", price: "₹10", img: "flux-parle-item" },
+        { name: "Curd 400g", price: "₹35", img: "flux-curd-item" },
+      ];
+
+      const searchSuggestions = [
+        { text: "Nike Air Max sneakers", icon: "shirt", cat: "Fashion" },
+        { text: "Biryani near me", icon: "utensils", cat: "Food" },
+        { text: "Milk and bread", icon: "shopping-cart", cat: "Grocery" },
+        { text: "Book bike ride to Indiranagar", icon: "bike", cat: "Rides" },
+        { text: "Summer dresses under ₹1000", icon: "shirt", cat: "Fashion" },
+        { text: "Pizza deals today", icon: "utensils", cat: "Food" },
+      ];
+
+      const navLinks = [
+        { text: "Fashion", icon: "shirt" },
+        { text: "Food", icon: "utensils" },
+        { text: "Grocery", icon: "shopping-cart" },
+        { text: "Rides", icon: "bike" },
+        { text: "Delivery", icon: "package" },
+        { text: "Offers", icon: "tag" },
+        { text: "FLUX Plus", icon: "crown" },
+        { text: "Help", icon: "headphones" },
+      ];
+
+      // ====== RENDER FUNCTIONS ======
+      function renderFashionProducts() {
+        const track = document.getElementById("fashionTrack");
+        track.innerHTML = fashionProducts
+          .map(
+            (p, i) => `
+    <div class="product-card w-[220px] lg:w-[260px] shrink-0 bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer group shadow-sm" onclick="showToast('🛒 ${p.name} added to cart!')">
+      <div class="relative h-64 lg:h-72 overflow-hidden bg-fx-1">
+        <img src="https://picsum.photos/seed/${p.img}/520/720.jpg" class="p-img w-full h-full object-cover">
+        ${p.tag ? `<span class="absolute top-3 left-3 bg-fx-accent text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg">${p.tag}</span>` : ""}
+        <button class="p-quick absolute bottom-3 left-3 right-3 bg-fx-g4 text-white font-semibold py-2.5 rounded-xl text-xs">Quick Add</button>
+        <button class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm" onclick="event.stopPropagation();showToast('❤️ Added to wishlist')">
+          <i data-lucide="heart" class="w-4 h-4 text-fx-g3"></i>
+        </button>
+      </div>
+      <div class="p-4">
+        <p class="text-fx-g1 text-[11px] uppercase tracking-wider">${p.brand}</p>
+        <h3 class="font-medium text-sm mt-0.5 truncate text-fx-g4">${p.name}</h3>
+        <div class="flex items-center gap-2 mt-2">
+          <span class="font-bold text-fx-g5">${p.price}</span>
+          <span class="text-fx-g1 text-xs line-through">${p.oldPrice}</span>
+          <span class="text-fx-accent text-[11px] font-semibold">${p.discount} off</span>
+        </div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function renderFoodGrid() {
+        const grid = document.getElementById("foodGrid");
+        grid.innerHTML = foodRestaurants
+          .map(
+            (r, i) => `
+    <div class="product-card bg-white border border-fx-4 rounded-2xl overflow-hidden cursor-pointer animate-on-scroll stagger-${(i % 3) + 1} shadow-sm" onclick="showToast('🍔 Opening ${r.name} menu...')">
+      <div class="relative h-44 overflow-hidden">
+        <img src="https://picsum.photos/seed/${r.img}/600/400.jpg" class="p-img w-full h-full object-cover">
+        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+          <span class="bg-fx-orange text-white text-[10px] font-bold px-2.5 py-1 rounded-lg">${r.offer}</span>
+        </div>
+        <div class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm">
+          <i data-lucide="heart" class="w-4 h-4 text-fx-g3"></i>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="font-semibold text-sm text-fx-g4">${r.name}</h3>
+          <span class="flex items-center gap-1 bg-fx-accent/10 text-fx-accent text-xs font-bold px-2 py-0.5 rounded-lg shrink-0">${r.rating} ★</span>
+        </div>
+        <p class="text-fx-g1 text-xs mt-1">${r.cuisine}</p>
+        <div class="flex items-center gap-3 mt-2 text-fx-g1 text-xs">
+          <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>${r.time}</span>
+          <span>${r.price}</span>
+        </div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function renderGroceryGrid() {
+        const grid = document.getElementById("groceryGrid");
+        grid.innerHTML = groceryItems
+          .map(
+            (g, i) => `
+    <div class="product-card bg-white border border-fx-4 rounded-2xl p-3 lg:p-4 text-center cursor-pointer animate-on-scroll stagger-${(i % 6) + 1} shadow-sm" onclick="showToast('✅ ${g.name} added to cart!')">
+      <div class="h-20 lg:h-24 overflow-hidden rounded-xl mb-2 bg-fx-1">
+        <img src="https://picsum.photos/seed/${g.img}/300/300.jpg" class="p-img w-full h-full object-cover">
+      </div>
+      <p class="text-xs font-medium truncate text-fx-g4">${g.name}</p>
+      <p class="text-fx-accent text-xs font-bold mt-1">${g.price}</p>
+      <button class="mt-2 w-full bg-fx-1 border border-fx-4 text-[11px] font-semibold py-1.5 rounded-lg hover:bg-fx-accent hover:text-white hover:border-fx-accent transition-all text-fx-g3">ADD</button>
+    </div>
+  `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function renderSearchResults(query = "") {
+        const container = document.getElementById("searchResults");
+        const filtered = query
+          ? searchSuggestions.filter((s) =>
+              s.text.toLowerCase().includes(query.toLowerCase()),
+            )
+          : searchSuggestions;
+        container.innerHTML = filtered
+          .map(
+            (s) => `
+    <button class="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-fx-1 transition-colors text-left" onclick="showToast('🔍 Searching: ${s.text}');hideSearch()">
+      <i data-lucide="${s.icon}" class="w-4 h-4 text-fx-g1 shrink-0"></i>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm truncate text-fx-g4">${s.text}</p>
+      </div>
+      <span class="text-[10px] text-fx-g1 border border-fx-4 rounded px-1.5 py-0.5 shrink-0 bg-fx-1">${s.cat}</span>
+    </button>
+  `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function renderMobileNav() {
+        const container = document.getElementById("mobileNavLinks");
+        container.innerHTML = navLinks
+          .map(
+            (l) => `
+    <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-fx-1 transition-colors text-left" onclick="showToast('Opening ${l.text}...');toggleMobileMenu()">
+      <i data-lucide="${l.icon}" class="w-5 h-5 text-fx-g1"></i>
+      <span class="text-sm font-medium text-fx-g4">${l.text}</span>
+    </button>
+  `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      // ====== HERO SLIDER ======
+      let currentSlide = 0;
+      const totalSlides = 4;
+      let sliderInterval;
+
+      function initSlider() {
+        const dotsContainer = document.getElementById("sliderDots");
+        for (let i = 0; i < totalSlides; i++) {
+          const dot = document.createElement("button");
+          dot.className = `h-2.5 rounded-full transition-all duration-300 ${i === 0 ? "bg-fx-accent w-8" : "bg-fx-5/20 w-2.5 hover:bg-fx-5/40"}`;
+          dot.onclick = () => goToSlide(i);
+          dotsContainer.appendChild(dot);
+        }
+        startSlider();
+      }
+
+      function goToSlide(n) {
+        document
+          .querySelectorAll(".hero-slide")
+          .forEach((s) => s.classList.remove("active"));
+        document.querySelectorAll("#sliderDots button").forEach((d, i) => {
+          d.className = `h-2.5 rounded-full transition-all duration-300 ${i === n ? "bg-fx-accent w-8" : "bg-fx-5/20 w-2.5 hover:bg-fx-5/40"}`;
+        });
+        currentSlide = n;
+        document.querySelector(`[data-slide="${n}"]`).classList.add("active");
+        document.getElementById("slideCounter").textContent = String(
+          n + 1,
+        ).padStart(2, "0");
+      }
+
+      function nextSlide() {
+        goToSlide((currentSlide + 1) % totalSlides);
+        resetSlider();
+      }
+      function prevSlide() {
+        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        resetSlider();
+      }
+      function startSlider() {
+        sliderInterval = setInterval(nextSlide, 5000);
+      }
+      function resetSlider() {
+        clearInterval(sliderInterval);
+        startSlider();
+      }
+
+      // ====== COUNTDOWN ======
+      let countdownTotal = 5 * 3600 + 42 * 60 + 18;
+      function updateCountdown() {
+        if (countdownTotal <= 0) countdownTotal = 6 * 3600;
+        countdownTotal--;
+        const h = Math.floor(countdownTotal / 3600);
+        const m = Math.floor((countdownTotal % 3600) / 60);
+        const s = countdownTotal % 60;
+        document.getElementById("cd-hours").textContent = String(h).padStart(
+          2,
+          "0",
+        );
+        document.getElementById("cd-mins").textContent = String(m).padStart(
+          2,
+          "0",
+        );
+        document.getElementById("cd-secs").textContent = String(s).padStart(
+          2,
+          "0",
+        );
+      }
+
+      // ====== FASHION SCROLL ======
+      let fashionPos = 0;
+      function scrollFashion(dir) {
+        const track = document.getElementById("fashionTrack");
+        const container = document.getElementById("fashionScroll");
+        const maxScroll = track.scrollWidth - container.offsetWidth;
+        const step = 280;
+        fashionPos = Math.max(0, Math.min(fashionPos + dir * step, maxScroll));
+        track.style.transform = `translateX(-${fashionPos}px)`;
+      }
+
+      // ====== SEARCH ======
+      const searchInput = document.getElementById("searchInput");
+      const searchDropdown = document.getElementById("searchDropdown");
+
+      searchInput.addEventListener("focus", () => {
+        renderSearchResults(searchInput.value);
+        searchDropdown.classList.remove("hidden");
+      });
+      searchInput.addEventListener("input", () => {
+        renderSearchResults(searchInput.value);
+        searchDropdown.classList.remove("hidden");
+      });
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.closest("#searchInput") &&
+          !e.target.closest("#searchDropdown")
+        )
+          hideSearch();
+      });
+      function hideSearch() {
+        searchDropdown.classList.add("hidden");
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        if (e.key === "Escape") hideSearch();
+      });
+
+      // ====== MOBILE MENU ======
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        const panel = document.getElementById("mobileMenuPanel");
+        if (menu.classList.contains("hidden")) {
+          menu.classList.remove("hidden");
+          requestAnimationFrame(
+            () => (panel.style.transform = "translateX(0)"),
+          );
+        } else {
+          panel.style.transform = "translateX(100%)";
+          setTimeout(() => menu.classList.add("hidden"), 500);
+        }
+      }
+
+      // ====== TOAST ======
+      function showToast(message) {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className =
+          "toast bg-white border border-fx-4 rounded-xl px-5 py-3.5 text-sm shadow-2xl flex items-center gap-3 max-w-sm backdrop-blur-xl text-fx-g4";
+        toast.innerHTML = `<span>${message}</span><button class="shrink-0 text-fx-g1 hover:text-fx-g4" onclick="this.parentElement.remove()"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateY(-10px)";
+          toast.style.transition = "all 0.3s";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // ====== SCROLL ANIMATIONS ======
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+      );
+
+      // ====== NAVBAR SCROLL ======
+      let lastScroll = 0;
+      window.addEventListener("scroll", () => {
+        const navbar = document.getElementById("navbar");
+        const backToTop = document.getElementById("backToTop");
+        const scrollY = window.scrollY;
+
+        if (scrollY > 100) {
+          navbar.style.transform =
+            scrollY > lastScroll && scrollY > 400
+              ? "translateY(-100%)"
+              : "translateY(0)";
+        }
+        lastScroll = scrollY;
+
+        if (scrollY > 600) {
+          backToTop.style.opacity = "1";
+          backToTop.style.transform = "translateY(0)";
+        } else {
+          backToTop.style.opacity = "0";
+          backToTop.style.transform = "translateY(16px)";
+        }
+      });
+
+      // ====== INIT ======
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+        initSlider();
+        renderFashionProducts();
+        renderFoodGrid();
+        renderGroceryGrid();
+        renderMobileNav();
+        setInterval(updateCountdown, 1000);
+
+        document
+          .getElementById("fashionPrev")
+          .addEventListener("click", () => scrollFashion(-1));
+        document
+          .getElementById("fashionNext")
+          .addEventListener("click", () => scrollFashion(1));
+
+        setTimeout(() => {
+          document
+            .querySelectorAll(".animate-on-scroll")
+            .forEach((el) => observer.observe(el));
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

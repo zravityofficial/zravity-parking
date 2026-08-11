@@ -1,137 +1,206 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #1e1e1c;
+/* ------------------------------------------------------------------ *
+ *  Zravity — design tokens ported directly from the Tabella system.
+ *  Fixed light design (warm greige surfaces, ink-blue text, electric
+ *  lime accent, one dark contrast section). Red Hat Display only.
+ * ------------------------------------------------------------------ */
 
-  /* Zravity palette */
-  --color-surface-white: #ffffff;
-  --color-surface-snow: #fafaf9;
-  --color-surface-cloud: #f5f5f4;
-  --color-surface-mist: #eeeeec;
-  --color-line: #e4e4e1;
-  --color-grey-300: #d9d9d6;
-  --color-grey-400: #a8a8a4;
-  --color-grey-500: #6b6b68;
-  --color-ink: #1e1e1c;
-  --color-ink-deep: #111110;
-  --color-accent-blue: #2f6fed;
-  --color-accent-violet: #7c5cfc;
-  --color-accent-success: #1fae72;
-  --color-accent-warning: #f5a623;
-  --color-accent-danger: #e5484d;
+:root {
+  /* Surfaces */
+  --paper: #f4f4f2; /* page background — minimal off-white */
+  --panel: #d9d9d9; /* large greige hero/section panels (Tabella surface) */
+  --surface: #f7f7f5; /* elevated card */
+  --surface-white: #ffffff;
+  --surface-grey: #e6e5e1;
+  --line: #e3e2dc;
+  --line-strong: #d3d2ca;
+
+  /* Ink */
+  --ink: #29303d; /* --color-text-primary */
+  --ink-2: rgba(41, 48, 61, 0.58); /* secondary text */
+  --ink-3: rgba(41, 48, 61, 0.4);
+
+  /* Accent — electric lime */
+  --accent: #e6fb2d;
+  --accent-dark: #d9ee1c;
+  --accent-soft: #e3ef7a;
+  --accent-ink: #21261a; /* text on lime */
+
+  /* Dark cards + contrast section */
+  --dark: #232323;
+  --dark-2: #2f2f2f;
+  --dark-fg: #f5f5f2;
+  --dark-fg-2: rgba(245, 245, 242, 0.6);
+
+  --shadow-sm: 0 1px 2px rgba(41, 48, 61, 0.05);
+  --shadow-card:
+    0 2px 6px rgba(41, 48, 61, 0.05), 0 24px 48px -28px rgba(41, 48, 61, 0.2);
+  --dot: rgba(41, 48, 61, 0.14);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-surface: var(--surface);
+  --color-surface-white: var(--surface-white);
+  --color-surface-grey: var(--surface-grey);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
 
-  --color-surface-white: var(--color-surface-white);
-  --color-surface-snow: var(--color-surface-snow);
-  --color-surface-cloud: var(--color-surface-cloud);
-  --color-surface-mist: var(--color-surface-mist);
-  --color-line: var(--color-line);
-  --color-grey-300: var(--color-grey-300);
-  --color-grey-400: var(--color-grey-400);
-  --color-grey-500: var(--color-grey-500);
-  --color-ink: var(--color-ink);
-  --color-ink-deep: var(--color-ink-deep);
-  --color-accent-blue: var(--color-accent-blue);
-  --color-accent-violet: var(--color-accent-violet);
-  --color-accent-success: var(--color-accent-success);
-  --color-accent-warning: var(--color-accent-warning);
-  --color-accent-danger: var(--color-accent-danger);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
 
-  --animate-float-a: float-a 14s ease-in-out infinite;
-  --animate-float-b: float-b 17s ease-in-out infinite;
-  --animate-float-c: float-a 20s ease-in-out infinite;
-  --animate-fade-up: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-crane-move: crane-move 7s ease-in-out infinite alternate;
-  --animate-crane-swing: crane-swing 2.6s ease-in-out infinite;
-  --animate-flag-wave: flag-wave 2.6s ease-in-out infinite;
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  --color-dark: var(--dark);
+  --color-dark-2: var(--dark-2);
+  --color-dark-fg: var(--dark-fg);
+  --color-dark-fg-2: var(--dark-fg-2);
+
+  --font-sans: var(--font-red-hat), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-vlnl), var(--font-red-hat), sans-serif;
+
+  /* Pill button + soft card radii (Tabella scale) */
+  --radius-pill: 1.875rem;
+  --radius-card: 1.5rem;
+  --radius-card-lg: 1.875rem;
+
+  --animate-fade-up: fade-up 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-float-a: float-a 18s ease-in-out infinite;
+  --animate-float-b: float-b 22s ease-in-out infinite;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-ping-slow: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #111110;
-    --foreground: #fafaf9;
-  }
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.bg-dotgrid {
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Scroll-reveal (see components/reveal.tsx) — eased, with a soft blur-in */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(10px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
 @keyframes float-a {
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
   50% {
-    transform: translate(30px, -40px) scale(1.08);
+    transform: translate(28px, -34px) scale(1.06);
   }
 }
-
 @keyframes float-b {
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
   50% {
-    transform: translate(-40px, 30px) scale(1.05);
+    transform: translate(-32px, 24px) scale(1.05);
   }
 }
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes crane-move {
+@keyframes marquee {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(110px);
+    transform: translateX(-50%);
   }
 }
-
-@keyframes crane-swing {
-  0%,
+@keyframes ping-slow {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  80%,
   100% {
-    transform: rotate(-6deg);
-  }
-  50% {
-    transform: rotate(6deg);
-  }
-}
-
-@keyframes flag-wave {
-  0%,
-  100% {
-    transform: skewX(0deg);
-  }
-  50% {
-    transform: skewX(-8deg);
+    transform: scale(2.4);
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
   }
 }
